@@ -1,0 +1,56 @@
+- hosts: fortigates
+  connection: httpapi
+
+  # when using the colltion
+  #collections:
+  #- fortinet.fortios
+  gather_facts: false
+  vars:
+    vdom: "root"
+    ansible_httpapi_use_ssl: yes
+    ansible_httpapi_validate_certs: no
+    #ansible_httpapi_port: 8443
+    ssl_verify: "False"
+
+    firewall_ip: "192.168.1.1"
+    username: "admin"
+    password: ""
+
+  tasks:
+  - name: gather basic system status facts
+    fortios_facts:
+
+      vdom:  "{{ vdom }}"
+
+      gather_subset:
+        - fact: 'system_status_select'
+        - fact: 'system_time_select'
+        - fact: 'system_firmware_select'
+        - fact: 'system_current-admins_select'
+        - fact: 'system_ha-checksums_select'
+    register: status
+    tags: [never, show]
+
+  - name: Show facts
+    debug:
+      msg: "{{ status }}"
+    tags: [never, show]
+
+  - name: gather all physical interfaces status facts
+    fortios_facts:
+      vdom:  "{{ vdom }}"
+      gather_subset:
+        - fact: 'system_interface_select'
+          filters:
+            #- include_vlan: true
+            #- interface_name: 'wan1'
+    register: interfaces
+    tags: [never, show]
+  
+  - name: Show interfaces
+    debug:
+      msg: "{{ interfaces }}"
+    tags: [never, show]
+
+
+

@@ -1,0 +1,130 @@
+- hosts: fortigates
+  connection: httpapi
+
+  # when using the colltion
+  #collections:
+  #- fortinet.fortios
+  gather_facts: false
+  vars:
+    vdom: "root"
+    ansible_httpapi_use_ssl: yes
+    ansible_httpapi_validate_certs: no
+    #ansible_httpapi_port: 8443
+    ssl_verify: "False"
+
+    firewall_ip: "192.168.1.1"
+    username: "admin"
+    password: ""
+
+  tasks:
+ 
+
+
+  - name: Configure interface wan1 with dhcp
+    fortios_system_interface:
+      vdom:  "{{ vdom }}"
+      state: "present"
+      system_interface:
+        #interface: "wan2"
+        #mode: "static"
+        mode: "dhcp"
+        type: "physical"
+        #ip: "192.168.10.100/24"
+        defaultgw: "enable"
+        dns_server_override: "disable"
+        #alias: ""
+        name: "wan1"
+        #vdom: "root"
+        allowaccess: "ping"
+    tags: [never, wan1]
+
+  - name: Configure interface lan with static IPv4
+    fortios_system_interface:
+      vdom:  "{{ vdom }}"
+      state: "present"
+      system_interface:
+        #interface: "wan2"
+        mode: "static"
+        type: "physical"
+        ip: "10.10.10.1/24"
+        #alias: ""
+        name: "lan"
+        #vdom: "root"
+    tags: [never, lan]
+
+  - name: Configure lan to use onyl internal and not wifi
+    fortios_system_switch_interface:
+      vdom:  "{{ vdom }}"
+      state: "present"
+
+      system_switch_interface:
+        #intra_switch_policy: "implicit"
+        member:
+         - interface_name: "internal"
+
+        name: "lan"
+        type: "switch"
+        vdom: "root"
+    tags: [never, lan]
+
+  # - name: delete ap
+  #   fortios_wireless_controller_ap_status:
+  #     vdom:  "{{ vdom }}"
+  #     wireless_controller_ap_status:
+  #       id: 10
+  #   tags: [never]
+
+  # - name: delete wifi interface
+  #   fortios_system_interface:
+  #     vdom:  "{{ vdom }}"
+  #     state: "absent"
+  #     system_interface:
+  #       interface: "wifi"
+  #       name: "wifi"
+  #       vdom: "root"
+  #   tags: [never]
+
+  # - name: VAP
+  #   fortios_wireless_controller_vap:
+  #     vdom:  "{{ vdom }}"
+  #     state: "absent"
+  #     wireless_controller_vap:
+  #       name: "wifi"
+  #   tags: [never, delwifi]
+
+  # - name: WTP 
+  #   fortios_wireless_controller_wtp:
+  #     vdom:  "{{ vdom }}"
+  #     state: "present"
+  #     wireless_controller_wtp:
+  #       name: "wifi2"
+  #   tags: [never]
+
+  # - name: WTP no radio profle
+  #   fortios_wireless_controller_wtp_profile:
+  #     vdom:  "{{ vdom }}"
+  #     state: "present"
+  #     wireless_controller_wtp_profile:
+  #       name: "no-radio"
+  #       radio_1:
+  #         mode: "disabled"
+  #       radio_2:
+  #         mode: "disabled"
+  #   tags: [never, wifi]
+
+  - name: gather all physical interfaces status facts
+    fortios_facts:
+      vdom:  "{{ vdom }}"
+      gather_subset:
+
+        - fact: 'system_interface_select'
+          filters:
+            #- include_vlan: true
+            #- interface_name: 'wan1'
+    register: interfaces
+    tags: [never, lan]
+
+  - name: Show interfaces
+    debug:
+      msg: "{{ interfaces }}"
+    tags: [never, lan]

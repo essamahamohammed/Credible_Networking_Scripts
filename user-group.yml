@@ -1,0 +1,40 @@
+- hosts: fortigates
+  connection: httpapi
+
+  # when using the colltion
+  #collections:
+  #- fortinet.fortios
+  gather_facts: false
+  vars:
+    vdom: "root"
+    ansible_httpapi_use_ssl: yes
+    ansible_httpapi_validate_certs: no
+    #ansible_httpapi_port: 8443
+    ssl_verify: "False"
+
+    firewall_ip: "192.168.1.1"
+    username: "admin"
+    password: ""
+
+  tasks:
+
+  - name: Configure local users
+    fortios_user_local:
+      vdom:  "{{ vdom }}"
+      state: "present"
+      user_local:
+        name: 'testuser'
+        email_to: 'testuser@example.com'
+        type: "password"
+        passwd: 'testpwd'
+    tags: [never, user]
+
+  - name: Configure group
+    fortios_user_group:
+      vdom:  "{{ vdom }}"
+      state: "present"
+      user_group:
+        name: "vpn-user"
+        member: 
+          - name: 'testuser'
+    tags: [never, user]
