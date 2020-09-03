@@ -1,0 +1,11 @@
+https://raw.githubusercontent.com/uweswrtz/ansible_fortios_examples/master/README.md
+https://raw.githubusercontent.com/uweswrtz/ansible_fortios_examples/master/dhcp.yml
+https://raw.githubusercontent.com/uweswrtz/ansible_fortios_examples/master/facts.yml
+https://raw.githubusercontent.com/uweswrtz/ansible_fortios_examples/master/forti.yml
+https://raw.githubusercontent.com/uweswrtz/ansible_fortios_examples/master/global.yml
+https://raw.githubusercontent.com/uweswrtz/ansible_fortios_examples/master/interface.yml
+https://raw.githubusercontent.com/uweswrtz/ansible_fortios_examples/master/inventory.ini
+https://raw.githubusercontent.com/uweswrtz/ansible_fortios_examples/master/policy.yml
+https://raw.githubusercontent.com/uweswrtz/ansible_fortios_examples/master/raw.txt
+https://raw.githubusercontent.com/uweswrtz/ansible_fortios_examples/master/user-group.yml
+https://raw.githubusercontent.com/uweswrtz/ansible_fortios_examples/master/vars.yml

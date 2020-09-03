@@ -1,0 +1,44 @@
+- hosts: fortigates
+  connection: httpapi
+
+  # when using the colltion
+  #collections:
+  #- fortinet.fortios
+  gather_facts: false
+  vars_files:
+    - vars.yml
+
+  tasks:
+  
+  - name: Configure general log settings.
+    fortios_log_setting:
+      vdom:  "{{ vdom }}"
+      log_setting:
+        local_in_allow: "enable"
+        local_in_deny_broadcast: "enable"
+        local_in_deny_unicast: "enable"
+        local_out: "enable"
+    tags: [never, global]
+
+  - name: Configure global attributes - hostname
+    fortios_system_global:
+      vdom:  "{{ vdom }}"
+      system_global:
+        hostname: "{{ inventory_hostname }}"
+    tags: [never, hostname]
+
+  - name: Configure global attributes - banner settings
+    fortios_system_global:
+      vdom:  "{{ vdom }}"
+      system_global:
+        post_login_banner: disable
+        pre_login_banner: disable
+    tags: [never, global]
+
+  - name: Configure admin https port to 8443
+    fortios_system_global:
+      vdom:  "{{ vdom }}"
+      system_global:
+        admin_sport: 8443
+    tags: [never, adminports, global]
+

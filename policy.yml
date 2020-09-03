@@ -1,0 +1,159 @@
+- hosts: fortigates
+  connection: httpapi
+
+  # when using the colltion
+  #collections:
+  #- fortinet.fortios
+  gather_facts: false
+  vars_files:
+    - vars.yml
+
+
+  tasks:
+
+  - name: Create IPv4 addresse 
+    fortios_firewall_address:
+      vdom:  "{{ vdom }}"
+      state: "present"
+      firewall_address:
+        name: "example-60"
+        subnet: "192.168.1.60/32"
+    tags: [never, address]
+
+  - name: Create IPv4 addresse for google
+    fortios_firewall_address:
+      vdom:  "{{ vdom }}"
+      state: "present"
+      firewall_address:
+        name: "google-dns"
+        subnet: "8.8.8.8/32"
+    tags: [never, address]
+
+  - name: Create Block Policy 
+    fortios_firewall_policy:
+      vdom:  "{{ vdom }}"
+      state: "present"
+      firewall_policy:
+        #state: "present"
+        policyid: "60"
+        name: "test-block"
+        action: "deny"
+        srcintf:
+          - name: any
+        dstintf:
+          - name: any
+        srcaddr: 
+          - name: 'example-60'
+        dstaddr:
+          - name: 'all'
+        service: 
+          - name: 'ALL'
+        send_deny_packet: "enable"
+        schedule: "always"
+        #nat: "disable"
+        logtraffic: "all"
+        logtraffic_start: "enable"
+
+    tags: [never, policy]
+
+  - name: Create DNS Policy 
+    fortios_firewall_policy:
+      vdom:  "{{ vdom }}"
+      https: "False"
+      state: "present"
+      firewall_policy:
+        #state: "present"
+        status: "disable"
+        policyid: "61"
+        name: "example-60-allow"
+        action: "accept"
+        srcintf:
+          - name: lan
+        dstintf:
+          - name: wan
+        srcaddr: 
+          - name: 'example-60'
+        dstaddr:
+          - name: 'google-dns'
+        service: 
+          - name: 'DNS'
+        #send_deny_packet: "enable"
+        schedule: "always"
+        nat: "enable"
+        logtraffic: "all"
+        logtraffic_start: "enable"
+
+    tags: [never, policy]
+
+  # # working Example
+  # - name: Create Policy
+  #   fortios_firewall_policy:
+  #     host:  "{{ host }}"
+  #     username: "{{ username }}"
+  #     password: "{{ password }}"
+  #     vdom:  "{{ vdom }}"
+  #     https: "False"
+  #     state: "present"
+  #     firewall_policy:
+  #       state: "present"
+  #       policyid: "2002"
+  #       name: "Policy_2002"
+  #       action: "deny"
+  #       srcintf:
+  #         - name: any
+  #       dstintf:
+  #         - name: any
+  #       srcaddr: 
+  #         - name: 'all'
+  #       dstaddr:
+  #         - name: 'all'
+  #       service: 
+  #         - name: 'HTTP'
+  #         - name: 'HTTPS'
+  #       schedule: "always"
+  #       nat: "disable"
+  #       logtraffic: "all"
+  #       logtraffic_start: "disable"
+  #       uuid: "20190306-2321-0001-2002-e5167ed833c7"
+
+  - name: Create IPv4 addresse for net
+    fortios_firewall_address:
+      vdom:  "{{ vdom }}"
+      state: "present"
+      firewall_address:
+        name: "net_192.168.1.0-24"
+        subnet: "192.168.1.0/24"
+    tags: [never, address]
+
+ 
+  - name: Configure SSL VPN firewall policy
+    fortios_firewall_policy:
+      vdom:  "{{ vdom }}"
+      state: "present"
+      firewall_policy:
+        status: "enable"
+        policyid: "100"
+        name: "VPN-to-NET"
+        action: "accept"
+        srcintf:
+          - name: ssl.root
+        dstintf:
+          - name: lan
+        srcaddr: 
+          - name: 'SSLVPN_TUNNEL_ADDR1'
+        dstaddr:
+          - name: 'net_192.168.1.0-24'
+        service: 
+          - name: 'ALL'
+        #send_deny_packet: "enable"
+        schedule: "always"
+        #nat: "enable"
+        logtraffic: "all"
+        logtraffic_start: "enable"
+        #users:
+        groups:
+          - name: 'vpn-user-group'
+          - name: 'myuser'
+
+    tags: [never, policy]
+
