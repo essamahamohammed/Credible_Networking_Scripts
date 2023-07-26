@@ -1,0 +1,8 @@
+enable
+configure terminal
+
+vlan 10 
+name Mon_VLAN10
+
+end
+write memory
