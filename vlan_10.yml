@@ -1,0 +1,12 @@
+enable 
+configure terminal 
+interface ethernet 0/0
+switchport mode trunk 
+switchport trunk encapsulation dot1q
+switchport trunk allowed vlan 10
+interface ethernet 0/2
+switchport mode access
+switchport access vlan 10
+interface ethernet 0/1
+switchport mode access
+switchport access vlan 10
